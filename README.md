@@ -1,6 +1,6 @@
 # 🏦 Terminal Bancário Interativo
 
-> Um projeto full stack que simula operações bancárias em um terminal interativo via WebSocket, usando Java + Spring Boot no backend e HTML + JavaScript no frontend.
+> Um simples projeto full stack que simula operações bancárias em um terminal interativo via WebSocket, usando Java + Spring Boot no backend e HTML + JavaScript no frontend.
 
 ---
 
@@ -35,4 +35,19 @@
 | ![STOMP](https://img.shields.io/badge/STOMP-6DB33F?style=flat&logoColor=white) | Protocolo de mensageria |
 
 ---
+---
 
+## 💻 Como executar o projeto
+
+### Backend
+
+```bash
+# Clone o repositório
+git clone https://github.com/nic-cavalheiro/dio-bank-account.git
+cd conta-bancaria
+
+# Compile e execute (com Maven)
+./mvnw spring-boot:run
+
+# Para acessar o terminal estilizado em CSS
+http://localhost:8080/index.html
