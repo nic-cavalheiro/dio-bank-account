@@ -1,3 +1,5 @@
+package App;
+
 import java.math.BigDecimal;
 
 public class Saque {
@@ -6,7 +8,7 @@ public class Saque {
             System.out.println("Valor inválido para saque.");
         } else if (conta.getSaldo().compareTo(valor) >= 0) {
             conta.setSaldo(conta.getSaldo().subtract(valor));
-            System.out.println("Saque realizado com sucesso.");
+            System.out.println("App.Saque realizado com sucesso.");
         } else {
             System.out.println("Saldo insuficiente.");
         }

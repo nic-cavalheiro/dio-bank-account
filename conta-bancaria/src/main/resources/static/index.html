@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Terminal Bancário</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #terminal {
+            background-color: #000;
+            width: 90%;
+            max-width: 800px;
+            height: 500px;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 0 20px #0f0;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        #input {
+            margin-top: 1rem;
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+        }
+
+        #command {
+            flex: 1;
+            padding: 10px;
+            background-color: #000;
+            border: 1px solid #0f0;
+            color: #0f0;
+            font-family: inherit;
+        }
+
+        #send {
+            padding: 10px 20px;
+            background-color: #0f0;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        #send:hover {
+            background-color: #9f9;
+        }
+    </style>
+</head>
+<body>
+<h1>🏦 Terminal Bancário Interativo</h1>
+<div id="terminal">🟢 Conectando ao servidor...</div>
+
+<div id="input">
+    <input type="text" id="command" placeholder="Digite um comando, ex: criar Joao" />
+    <button id="send">Enviar</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    const terminal = document.getElementById("terminal");
+    const commandInput = document.getElementById("command");
+    const sendBtn = document.getElementById("send");
+
+    const socket = new SockJS("/ws");
+    const stompClient = Stomp.over(socket);
+    stompClient.debug = null;
+
+    stompClient.connect({}, () => {
+        // Primeiro, inscreve no tópico
+        stompClient.subscribe("/topic/response", (message) => {
+            appendToTerminal("> " + message.body);
+        });
+
+        // Depois, envia o comando menu para exibir as opções
+        stompClient.send("/app/command", {}, "menu");
+    }, (error) => {
+        appendToTerminal("❌ Falha ao conectar: " + error);
+    });
+
+    stompClient.debug = (msg) => console.log("[STOMP]", msg);
+
+
+    sendBtn.onclick = sendCommand;
+    commandInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") sendCommand();
+    });
+
+    function sendCommand() {
+        const cmd = commandInput.value.trim();
+        if (cmd) {
+            stompClient.send("/app/command", {}, cmd);
+            appendToTerminal("💻 " + cmd);
+            commandInput.value = "";
+        }
+    }
+
+    function appendToTerminal(text) {
+        terminal.textContent += "\n" + text;
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+</script>
+</body>
+</html>
